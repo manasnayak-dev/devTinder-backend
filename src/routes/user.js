@@ -50,14 +50,21 @@ userRouter.get("/user/connection", userAuth, async (req, res) => {
     })
       .populate("toUserID", "firstName lastName photoURL")
       .populate("fromUserID", "firstName lastName photoURL");
+    // .populate("_id");
 
     const data = connections.map((connection) => {
-      if (
+      const otherUser =
         connection.fromUserID._id.toString() === loggedinUser._id.toString()
-      ) {
-        return connection.toUserID;
-      }
-      return connection.fromUserID;
+          ? connection.toUserID
+          : connection.fromUserID;
+
+      return {
+        connectionId: connection._id, // connection document id
+        userId: otherUser._id, // other user's id
+        firstName: otherUser.firstName,
+        lastName: otherUser.lastName,
+        photoURL: otherUser.photoURL,
+      };
     });
     res.json({
       message: "Data fecth successfully",

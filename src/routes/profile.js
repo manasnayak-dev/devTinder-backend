@@ -21,7 +21,14 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
     const loggedinuser = req.user;
 
-    const allowedkey = ["firstName", "lastName", "age", "gender", "photoURL", "about"];
+    const allowedkey = [
+      "firstName",
+      "lastName",
+      "age",
+      "gender",
+      "photoURL",
+      "about",
+    ];
 
     const isallowed = Object.keys(req.body).every((item) =>
       allowedkey.includes(item),
@@ -39,7 +46,9 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
     res.send("updated success....");
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({
+      message: error.message,
+    });
   }
 });
 

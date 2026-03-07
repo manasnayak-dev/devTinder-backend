@@ -107,9 +107,9 @@ connectionrequestRouter.get("/user/feed", userAuth, async (req, res) => {
   try {
     const loggedinUser = req.user;
 
-    const page = parseInt(req.query.page)||1;
-    const limit  = 10;
-    const skip = (page-1)*limit;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
 
     const connections = await Connectionrequest.find({
       $or: [{ fromUserID: loggedinUser._id }, { toUserID: loggedinUser._id }],
@@ -123,9 +123,12 @@ connectionrequestRouter.get("/user/feed", userAuth, async (req, res) => {
       // hideUsers.add(loggedinUser._id.toString());
     });
 
-    const user =await  User.find({
+    const user = await User.find({
       _id: { $nin: Array.from(hideUsers) },
-    }).select("firstName lastName photoURL").skip(skip).limit(limit);
+    })
+      .select("firstName lastName photoURL")
+      .skip(skip)
+      .limit(limit);
 
     res.json({
       message: "Feed is added successfully",
@@ -137,5 +140,40 @@ connectionrequestRouter.get("/user/feed", userAuth, async (req, res) => {
     });
   }
 });
+
+connectionrequestRouter.post(
+  "/connection/remove/:requestID",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedinUser = req.user;
+
+      const connection = await Connectionrequest.findOne({
+        _id: req.params.requestID,
+        $or: [{ fromUserID: loggedinUser._id }, { toUserID: loggedinUser._id }],
+        status: "accepted",
+      });
+
+      if (!connection) {
+        return res.status(400).json({
+          message: "There is no connectiob",
+        });
+      }
+
+      connection.status = "rejected";
+
+      const data = await connection.save();
+
+      res.json({
+        message: "Success",
+        data,
+      });
+    } catch (error) {
+      res.status(400).json({
+        message: "Can not do",
+      });
+    }
+  },
+);
 
 module.exports = connectionrequestRouter;
