@@ -43,7 +43,11 @@ userAuthRouter.post("/login", async (req, res) => {
     if (isPasswordValid) {
       const token = await user.getjwt();
 
-      res.cookie("token", token);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
       res.send(user);
     } else {
       res.status(400).json({
