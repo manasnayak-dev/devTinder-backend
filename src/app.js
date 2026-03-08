@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "dev-tinder-frontend-two-phi.vercel.app",
+    origin: "https://dev-tinder-frontend-two-phi.vercel.app",
     credentials: true,
   }),
 );
