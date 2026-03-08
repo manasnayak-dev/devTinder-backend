@@ -3,7 +3,7 @@ const connectDB = require("./config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-require('dotenv').config();
+require("dotenv").config();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -13,6 +13,10 @@ app.use(
     credentials: true,
   }),
 );
+
+app.get("/", (req, res) => {
+  res.send("DevTinder Backend is running 🚀");
+});
 
 const auth = require("./routes/auth");
 const profile = require("./routes/profile");
